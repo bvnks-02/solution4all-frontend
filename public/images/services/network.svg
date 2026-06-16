@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="16" fill="#F0F4FA"/>
+  <!-- Central server -->
+  <rect x="170" y="100" width="60" height="80" rx="6" fill="#1C3F7A"/>
+  <rect x="178" y="110" width="44" height="6" rx="2" fill="#0891B2"/>
+  <rect x="178" y="122" width="44" height="6" rx="2" fill="#0891B2"/>
+  <circle cx="222" cy="148" r="3" fill="#22C55E"/>
+  <circle cx="222" cy="158" r="3" fill="#F5A800"/>
+  <circle cx="222" cy="168" r="3" fill="#1C3F7A" opacity="0.3"/>
+  <!-- Network lines -->
+  <line x1="170" y1="140" x2="100" y2="100" stroke="#0891B2" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="230" y1="140" x2="300" y2="100" stroke="#0891B2" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="200" y1="180" x2="200" y2="230" stroke="#0891B2" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="170" y1="140" x2="80" y2="200" stroke="#0891B2" stroke-width="2" stroke-dasharray="4 4"/>
+  <line x1="230" y1="140" x2="320" y2="200" stroke="#0891B2" stroke-width="2" stroke-dasharray="4 4"/>
+  <!-- Node: Laptop -->
+  <rect x="60" y="70" width="40" height="30" rx="4" fill="#1C3F7A"/>
+  <rect x="66" y="76" width="28" height="18" rx="2" fill="#E8F0FE"/>
+  <rect x="55" y="100" width="50" height="4" rx="2" fill="#1C3F7A"/>
+  <!-- Node: Desktop -->
+  <rect x="280" y="70" width="40" height="30" rx="4" fill="#1C3F7A"/>
+  <rect x="286" y="76" width="28" height="18" rx="2" fill="#E8F0FE"/>
+  <rect x="290" y="100" width="20" height="8" rx="2" fill="#1C3F7A"/>
+  <!-- Node: Phone -->
+  <rect x="185" y="230" width="30" height="50" rx="6" fill="#1C3F7A"/>
+  <rect x="190" y="238" width="20" height="32" rx="2" fill="#E8F0FE"/>
+  <circle cx="200" cy="276" r="3" fill="#F5A800"/>
+  <!-- Node: Tablet -->
+  <rect x="50" y="185" width="40" height="30" rx="4" fill="#1C3F7A"/>
+  <rect x="55" y="190" width="30" height="20" rx="2" fill="#E8F0FE"/>
+  <!-- Node: Printer -->
+  <rect x="300" y="185" width="50" height="35" rx="4" fill="#1C3F7A"/>
+  <rect x="308" y="190" width="34" height="16" rx="2" fill="#E8F0FE"/>
+  <rect x="310" y="220" width="30" height="4" rx="1" fill="#F5A800"/>
+  <!-- Shield overlay -->
+  <path d="M310 240 L310 255 Q310 270 325 275 Q340 270 340 255 L340 240 L325 233 Z" fill="#22C55E" opacity="0.2" stroke="#22C55E" stroke-width="2"/>
+  <path d="M320 252 L325 257 L335 247" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- WiFi symbol -->
+  <path d="M200 248 Q200 248 200 248" fill="#F5A800"/>
+  <circle cx="200" cy="248" r="2" fill="#F5A800"/>
+  <path d="M192 242 Q200 236 208 242" stroke="#F5A800" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M186 236 Q200 226 214 236" stroke="#F5A800" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

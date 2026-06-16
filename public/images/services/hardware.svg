@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="16" fill="#F0F4FA"/>
+  <!-- Shopping bag -->
+  <path d="M140 120 L120 260 L280 260 L260 120 Z" fill="#F5A800" opacity="0.15"/>
+  <path d="M140 120 L120 260 L280 260 L260 120 Z" stroke="#F5A800" stroke-width="3" fill="none"/>
+  <path d="M160 120 Q160 80 200 80 Q240 80 240 120" stroke="#1C3F7A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Laptop in bag -->
+  <rect x="155" y="150" width="90" height="55" rx="4" fill="#1C3F7A"/>
+  <rect x="161" y="156" width="78" height="40" rx="2" fill="#E8F0FE"/>
+  <rect x="145" y="205" width="110" height="6" rx="2" fill="#1C3F7A"/>
+  <!-- Code on screen -->
+  <rect x="170" y="165" width="30" height="3" rx="1" fill="#0891B2"/>
+  <rect x="170" y="172" width="50" height="3" rx="1" fill="#1C3F7A" opacity="0.3"/>
+  <rect x="170" y="179" width="40" height="3" rx="1" fill="#22C55E" opacity="0.6"/>
+  <!-- Printer -->
+  <rect x="290" y="160" width="70" height="40" rx="6" fill="#1C3F7A"/>
+  <rect x="298" y="166" width="54" height="20" rx="2" fill="#E8F0FE"/>
+  <rect x="300" y="200" width="50" height="5" rx="1" fill="#F5A800"/>
+  <rect x="310" y="150" width="30" height="14" rx="3" fill="#1C3F7A" opacity="0.7"/>
+  <!-- UPS/Onduleur -->
+  <rect x="40" y="170" width="50" height="70" rx="6" fill="#1C3F7A"/>
+  <rect x="48" y="178" width="34" height="30" rx="2" fill="#E8F0FE"/>
+  <circle cx="65" cy="225" r="6" fill="#22C55E"/>
+  <path d="M61 225 L65 229 L71 221" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Lightning bolt on UPS -->
+  <path d="M65 182 L60 195 L67 195 L62 208" stroke="#F5A800" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Price tag -->
+  <rect x="290" y="80" width="70" height="35" rx="8" fill="#F5A800"/>
+  <circle cx="305" cy="97" r="5" fill="#1C3F7A"/>
+  <rect x="315" y="90" width="35" height="4" rx="2" fill="#1C3F7A" opacity="0.6"/>
+  <rect x="315" y="98" width="25" height="4" rx="2" fill="#1C3F7A" opacity="0.4"/>
+  <!-- Star rating -->
+  <path d="M50 130 L55 142 L68 142 L58 150 L62 162 L50 155 L38 162 L42 150 L32 142 L45 142 Z" fill="#F5A800"/>
+  <!-- Decorative -->
+  <circle cx="340" cy="250" r="4" fill="#0891B2" opacity="0.3"/>
+  <circle cx="80" cy="260" r="5" fill="#1C3F7A" opacity="0.15"/>
+</svg>

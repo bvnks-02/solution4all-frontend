@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="16" fill="#F0F4FA"/>
+  <!-- Monitor -->
+  <rect x="100" y="60" width="200" height="130" rx="8" fill="#1C3F7A"/>
+  <rect x="112" y="72" width="176" height="100" rx="4" fill="#E8F0FE"/>
+  <!-- Screen content - gear icon -->
+  <circle cx="200" cy="122" r="24" stroke="#1C3F7A" stroke-width="4" fill="none"/>
+  <circle cx="200" cy="122" r="8" fill="#F5A800"/>
+  <line x1="200" y1="90" x2="200" y2="98" stroke="#1C3F7A" stroke-width="4" stroke-linecap="round"/>
+  <line x1="200" y1="146" x2="200" y2="154" stroke="#1C3F7A" stroke-width="4" stroke-linecap="round"/>
+  <line x1="168" y1="122" x2="176" y2="122" stroke="#1C3F7A" stroke-width="4" stroke-linecap="round"/>
+  <line x1="224" y1="122" x2="232" y2="122" stroke="#1C3F7A" stroke-width="4" stroke-linecap="round"/>
+  <!-- Monitor stand -->
+  <rect x="175" y="190" width="50" height="8" rx="2" fill="#1C3F7A"/>
+  <rect x="160" y="198" width="80" height="6" rx="3" fill="#1C3F7A"/>
+  <!-- Wrench -->
+  <path d="M280 80 L310 110 L300 120 L270 90 Z" fill="#F5A800"/>
+  <circle cx="275" cy="85" r="12" stroke="#F5A800" stroke-width="4" fill="none"/>
+  <!-- Screwdriver -->
+  <rect x="310" y="140" width="4" height="50" rx="2" fill="#0891B2"/>
+  <rect x="304" y="185" width="16" height="20" rx="3" fill="#F5A800"/>
+  <!-- Checkmark -->
+  <circle cx="140" cy="240" r="20" fill="#22C55E"/>
+  <path d="M130 240 L137 247 L150 233" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Decorative dots -->
+  <circle cx="60" cy="80" r="4" fill="#F5A800" opacity="0.3"/>
+  <circle cx="340" cy="60" r="6" fill="#0891B2" opacity="0.2"/>
+  <circle cx="80" cy="250" r="5" fill="#1C3F7A" opacity="0.15"/>
+  <circle cx="320" cy="240" r="4" fill="#F5A800" opacity="0.25"/>
+</svg>

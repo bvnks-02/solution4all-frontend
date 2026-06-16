@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="16" fill="#F0F4FA"/>
+  <!-- Code window -->
+  <rect x="80" y="50" width="240" height="180" rx="10" fill="#1C3F7A"/>
+  <!-- Title bar -->
+  <rect x="80" y="50" width="240" height="28" rx="10" fill="#162F5F"/>
+  <circle cx="100" cy="64" r="5" fill="#EF4444" opacity="0.8"/>
+  <circle cx="115" cy="64" r="5" fill="#F5A800" opacity="0.8"/>
+  <circle cx="130" cy="64" r="5" fill="#22C55E" opacity="0.8"/>
+  <!-- Code lines -->
+  <rect x="100" y="95" width="60" height="6" rx="3" fill="#0891B2"/>
+  <rect x="165" y="95" width="40" height="6" rx="3" fill="#F5A800" opacity="0.7"/>
+  <rect x="100" y="110" width="30" height="6" rx="3" fill="#22C55E" opacity="0.7"/>
+  <rect x="135" y="110" width="80" height="6" rx="3" fill="white" opacity="0.3"/>
+  <rect x="100" y="125" width="50" height="6" rx="3" fill="#0891B2" opacity="0.6"/>
+  <rect x="155" y="125" width="60" height="6" rx="3" fill="white" opacity="0.2"/>
+  <rect x="100" y="140" width="25" height="6" rx="3" fill="#F5A800"/>
+  <rect x="130" y="140" width="90" height="6" rx="3" fill="white" opacity="0.25"/>
+  <rect x="100" y="155" width="45" height="6" rx="3" fill="#22C55E"/>
+  <rect x="100" y="170" width="70" height="6" rx="3" fill="white" opacity="0.2"/>
+  <rect x="100" y="185" width="35" height="6" rx="3" fill="#0891B2" opacity="0.5"/>
+  <rect x="140" y="185" width="50" height="6" rx="3" fill="#F5A800" opacity="0.5"/>
+  <!-- Line numbers -->
+  <rect x="88" y="95" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <rect x="88" y="110" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <rect x="88" y="125" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <rect x="88" y="140" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <rect x="88" y="155" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <rect x="88" y="170" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <rect x="88" y="185" width="6" height="4" rx="1" fill="white" opacity="0.15"/>
+  <!-- Shield icon -->
+  <path d="M320 80 L320 100 Q320 120 340 128 Q360 120 360 100 L360 80 L340 72 Z" fill="#22C55E" opacity="0.2" stroke="#22C55E" stroke-width="2"/>
+  <path d="M333 98 L340 105 L355 90" stroke="#22C55E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Download arrow -->
+  <rect x="320" y="160" width="40" height="40" rx="8" fill="#F5A800" opacity="0.2"/>
+  <path d="M340 170 L340 188 M332 182 L340 190 L348 182" stroke="#F5A800" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Gear icon -->
+  <circle cx="60" cy="250" r="16" fill="none" stroke="#0891B2" stroke-width="3"/>
+  <circle cx="60" cy="250" r="6" fill="#0891B2"/>
+  <line x1="60" y1="230" x2="60" y2="236" stroke="#0891B2" stroke-width="3" stroke-linecap="round"/>
+  <line x1="60" y1="264" x2="60" y2="270" stroke="#0891B2" stroke-width="3" stroke-linecap="round"/>
+  <line x1="40" y1="250" x2="46" y2="250" stroke="#0891B2" stroke-width="3" stroke-linecap="round"/>
+  <line x1="74" y1="250" x2="80" y2="250" stroke="#0891B2" stroke-width="3" stroke-linecap="round"/>
+  <!-- Decorative -->
+  <circle cx="350" cy="250" r="4" fill="#1C3F7A" opacity="0.15"/>
+  <circle cx="50" cy="80" r="5" fill="#F5A800" opacity="0.2"/>
+</svg>

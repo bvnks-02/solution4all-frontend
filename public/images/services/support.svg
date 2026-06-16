@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <rect width="400" height="300" rx="16" fill="#F0F4FA"/>
+  <!-- Person silhouette -->
+  <circle cx="200" cy="100" r="30" fill="#1C3F7A"/>
+  <path d="M150 200 Q150 150 200 150 Q250 150 250 200" fill="#1C3F7A"/>
+  <!-- Headset -->
+  <path d="M170 90 Q170 65 200 65 Q230 65 230 90" stroke="#F5A800" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <rect x="162" y="85" width="16" height="20" rx="8" fill="#F5A800"/>
+  <rect x="222" y="85" width="16" height="20" rx="8" fill="#F5A800"/>
+  <!-- Microphone -->
+  <circle cx="162" cy="108" r="6" fill="#F5A800"/>
+  <line x1="162" y1="114" x2="162" y2="130" stroke="#F5A800" stroke-width="2"/>
+  <!-- Chat bubbles -->
+  <rect x="260" y="60" width="90" height="40" rx="12" fill="#0891B2"/>
+  <path d="M260 85 L250 95 L270 85" fill="#0891B2"/>
+  <rect x="270" y="70" width="50" height="4" rx="2" fill="white" opacity="0.8"/>
+  <rect x="270" y="80" width="35" height="4" rx="2" fill="white" opacity="0.5"/>
+  <rect x="50" y="80" width="80" height="40" rx="12" fill="#1C3F7A" opacity="0.8"/>
+  <path d="M130 105 L140 115 L120 105" fill="#1C3F7A" opacity="0.8"/>
+  <rect x="60" y="92" width="45" height="4" rx="2" fill="white" opacity="0.8"/>
+  <rect x="60" y="102" width="30" height="4" rx="2" fill="white" opacity="0.5"/>
+  <!-- Shield/check -->
+  <circle cx="310" cy="220" r="24" fill="#22C55E" opacity="0.15"/>
+  <path d="M298 220 L306 228 L322 212" stroke="#22C55E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Clock -->
+  <circle cx="90" cy="220" r="20" fill="none" stroke="#F5A800" stroke-width="3"/>
+  <line x1="90" y1="210" x2="90" y2="220" stroke="#F5A800" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="90" y1="220" x2="98" y2="225" stroke="#F5A800" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Decorative -->
+  <circle cx="340" cy="140" r="4" fill="#0891B2" opacity="0.3"/>
+  <circle cx="60" cy="160" r="5" fill="#F5A800" opacity="0.2"/>
+</svg>
