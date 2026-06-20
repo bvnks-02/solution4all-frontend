@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'https://apisol4all.acsociety.club/api/v1';
 
 // Transform MongoDB response fields to frontend-compatible format
 function transformRecord(record) {
@@ -311,11 +311,11 @@ export default api;
 export { API_URL };
 
 // Generate a file URL for uploaded files served by the Express backend
-// Express serves uploads/ at root path, so /products/file.jpg maps to uploads/products/file.jpg
+// Express serves uploads/ at root path: /uploads/products/file.jpg
 export function getFileURL(record, filename) {
   if (!filename || !record?.id) return null;
   const baseUrl = API_URL.replace('/api/v1', '');
-  return `${baseUrl}/products/${filename}`;
+  return `${baseUrl}/uploads/products/${filename}`;
 }
 
 // Auth store interface (localStorage-backed, for components that need reactive auth state)
