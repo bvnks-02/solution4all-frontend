@@ -291,6 +291,8 @@ export const collection = (name) => {
 };
 
 // File upload helper (supports POST and PUT)
+// Do NOT set Content-Type manually — axios auto-sets multipart/form-data
+// with the correct boundary when given a FormData object.
 export const uploadFile = async (url, formData, method = 'post') => {
   const token = localStorage.getItem('auth_token');
   const response = await axios({
@@ -298,7 +300,6 @@ export const uploadFile = async (url, formData, method = 'post') => {
     url: `${API_URL}${url}`,
     data: formData,
     headers: {
-      'Content-Type': 'multipart/form-data',
       Authorization: token ? `Bearer ${token}` : '',
     },
   });
