@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://apisol4all.acsociety.club/api/v1';
+// Ensure API_URL always has a protocol — prevents relative-path bugs in Vercel
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'https://apisol4all.acsociety.club/api/v1';
+const API_URL = RAW_API_URL.startsWith('http') ? RAW_API_URL : `https://${RAW_API_URL}`;
 
 // Transform MongoDB response fields to frontend-compatible format
 function transformRecord(record) {
