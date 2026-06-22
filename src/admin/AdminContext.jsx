@@ -9,17 +9,27 @@ export function AdminProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Trust stored credentials without a network call — avoids
-    // ERR_CONNECTION_REFUSED noise when the backend is unavailable.
-    // Stale tokens are cleaned up on the next failed API call.
     if (auth.isValid()) {
-      setAdmin(auth.getRecord());
-      setIsAuthenticated(true);
+      // Verify the stored token is still accepted by the server.
+      // Falls back to stored credentials if the server is unreachable,
+      // so the admin can still access the dashboard during outages.
+      auth.refresh()
+        .then((result) => {
+          setAdmin(result.record);
+          setIsAuthenticated(true);
+          setLoading(false);
+        })
+        .catch(() => {
+          // Token invalid — interceptor already cleared it
+          setIsAuthenticated(false);
+          setAdmin(null);
+          setLoading(false);
+        });
     } else {
       setIsAuthenticated(false);
       setAdmin(null);
+      setLoading(false);
     }
-    setLoading(false);
 
     // Subscribe to auth state changes
     const unsubscribe = auth.onChange((token, record) => {

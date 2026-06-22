@@ -88,7 +88,9 @@ export default function AdminSubmissions() {
       setTotalPages(listResult.totalPages);
       setNewCount(newResult.length);
     } catch (err) {
-      console.error('Failed to fetch submissions:', err);
+      if (err?.code !== 'ERR_NETWORK' && err?.response?.status !== 404) {
+        console.error('Failed to fetch submissions:', err);
+      }
       toast?.error('Erreur lors du chargement des messages');
     } finally {
       setLoading(false);
