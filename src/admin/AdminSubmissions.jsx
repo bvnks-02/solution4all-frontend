@@ -33,7 +33,7 @@ const statusBadgeColors = {
 
 export default function AdminSubmissions() {
   const { admin } = useAdmin();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [submissions, setSubmissions] = useState([]);
   const [totalCount, setTotalCount] = useState(0);

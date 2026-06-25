@@ -40,7 +40,7 @@ const statusBadgeColors = {
 
 export default function AdminOrders() {
   const { admin } = useAdmin();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [orders, setOrders] = useState([]);
   const [totalCount, setTotalCount] = useState(0);

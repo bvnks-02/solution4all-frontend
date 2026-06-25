@@ -8,7 +8,7 @@ import { User, Mail, Sliders, Lock, Plus, Key } from 'lucide-react';
 
 export default function AdminSettings() {
   const { admin } = useAdmin();
-  const { toast } = useToast();
+  const toast = useToast();
   const isAdmin = admin?.role === 'admin';
 
   const [activeTab, setActiveTab] = useState('profile');
@@ -86,7 +86,7 @@ export default function AdminSettings() {
     e.preventDefault();
     setSmtpLoading(true);
     try {
-      await api.post('/smtp-configs', smtpData);
+      await api.put('/smtp-configs', smtpData);
       toast.success('Configuration SMTP enregistrée avec succès.');
     } catch (err) {
       toast.error(err.response?.data?.message || "Erreur d'enregistrement SMTP.");

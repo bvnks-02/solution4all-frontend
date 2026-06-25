@@ -67,7 +67,7 @@ const statCardAccents = {
 
 export default function AdminAnalytics() {
   const { admin } = useAdmin();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [events, setEvents] = useState([]);
   const [totalCount, setTotalCount] = useState(0);

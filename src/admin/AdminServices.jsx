@@ -54,7 +54,7 @@ function slugify(text) {
 
 export default function AdminServices() {
   const { admin } = useAdmin();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);

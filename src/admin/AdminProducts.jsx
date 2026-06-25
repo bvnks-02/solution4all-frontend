@@ -35,7 +35,7 @@ function getImageUrl(product, filename) {
 
 export default function AdminProducts() {
   const { admin } = useAdmin();
-  const { toast } = useToast();
+  const toast = useToast();
   const fileInputRef = useRef(null);
 
   const [products, setProducts] = useState([]);

@@ -14,7 +14,7 @@ import Modal from '../components/ui/Modal';
 export default function AdminTrash() {
   const { admin, isAdmin } = useAdmin();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const toast = useToast();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function AdminTrash() {
       const res = await api.get('/products/trash');
       setProducts(res.data?.data || []);
     } catch (err) {
-      toast('Erreur lors du chargement de la corbeille', 'error');
+      toast.error('Erreur lors du chargement de la corbeille');
     } finally {
       setLoading(false);
     }
@@ -48,10 +48,10 @@ export default function AdminTrash() {
     setRestoring(id);
     try {
       await api.patch(`/products/${id}/restore`);
-      toast('Produit restauré avec succès', 'success');
+      toast.success('Produit restauré avec succès');
       setProducts((prev) => prev.filter((p) => (p._id || p.id) !== id));
     } catch (err) {
-      toast('Erreur lors de la restauration', 'error');
+      toast.error('Erreur lors de la restauration');
     } finally {
       setRestoring(null);
     }
@@ -62,12 +62,12 @@ export default function AdminTrash() {
     setHardDeleting(true);
     try {
       await api.delete(`/products/${hardDeleteTarget}/hard`);
-      toast('Produit supprimé définitivement', 'success');
+      toast.success('Produit supprimé définitivement');
       setProducts((prev) => prev.filter((p) => (p._id || p.id) !== hardDeleteTarget));
       setHardDeleteTarget(null);
     } catch (err) {
       const msg = err.response?.data?.message || 'Erreur lors de la suppression définitive';
-      toast(msg, 'error');
+      toast.error(msg);
       setHardDeleteTarget(null);
     } finally {
       setHardDeleting(false);
