@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route, NavLink, useLocation, Navigate } from 'react-router-dom';
-import { LayoutDashboard, Mail, BarChart3, Settings, LogOut, Menu, X, ChevronRight, ShoppingCart, Package, Sliders } from 'lucide-react';
+import { LayoutDashboard, Mail, BarChart3, Settings, LogOut, Menu, X, ChevronRight, ShoppingCart, Package, Sliders, Trash2, UserCircle } from 'lucide-react';
 import { useAdmin } from './AdminContext';
 import AdminDashboard from './AdminDashboard';
 import AdminSubmissions from './AdminSubmissions';
@@ -9,22 +9,24 @@ import AdminServices from './AdminServices';
 import AdminOrders from './AdminOrders';
 import AdminProducts from './AdminProducts';
 import AdminSettings from './AdminSettings';
+import AdminTrash from './AdminTrash';
 import ToastContainer from '../components/ui/ToastContainer';
 
-const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', end: true },
-  { to: '/admin/submissions', icon: Mail, label: 'Messages' },
-  { to: '/admin/orders', icon: ShoppingCart, label: 'Commandes' },
-  { to: '/admin/products', icon: Package, label: 'Produits' },
-  { to: '/admin/analytics', icon: BarChart3, label: 'Statistiques' },
-  { to: '/admin/services', icon: Sliders, label: 'Services' },
-  { to: '/admin/settings', icon: Settings, label: 'Paramètres' },
-];
-
 export default function AdminLayout() {
-  const { admin, logout } = useAdmin();
+  const { admin, logout, isAdmin } = useAdmin();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+
+  const navItems = [
+    { to: '/admin', icon: LayoutDashboard, label: 'Tableau de bord', end: true },
+    { to: '/admin/submissions', icon: Mail, label: 'Messages' },
+    { to: '/admin/orders', icon: ShoppingCart, label: 'Commandes' },
+    { to: '/admin/products', icon: Package, label: 'Produits' },
+    { to: '/admin/analytics', icon: BarChart3, label: 'Statistiques' },
+    { to: '/admin/services', icon: Sliders, label: 'Services' },
+    ...(isAdmin ? [{ to: '/admin/trash', icon: Trash2, label: 'Corbeille' }] : []),
+    { to: '/admin/settings', icon: UserCircle, label: 'Paramètres' },
+  ];
 
   const handleLogout = () => {
     logout();
@@ -135,6 +137,7 @@ export default function AdminLayout() {
             <Route path="products" element={<AdminProducts />} />
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="services" element={<AdminServices />} />
+            <Route path="trash" element={<AdminTrash />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>

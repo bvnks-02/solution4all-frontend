@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Plus, Star, Trash2, X, ImageIcon, Lock, RotateCcw } from 'lucide-react';
+import { Search, Plus, Star, Trash2, X, ImageIcon, RotateCcw } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { collection, uploadFile, API_URL, getFileURL } from '../lib/api';
 import { useAdmin } from './AdminContext';
@@ -10,6 +10,8 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 import Modal from '../components/ui/Modal';
+import PermissionGate from '../components/ui/PermissionGate';
+import { Link } from 'react-router-dom';
 
 const categoryLabels = {
   ordinateurs: 'Ordinateurs',
@@ -374,6 +376,11 @@ export default function AdminProducts() {
           <p className="mt-1 text-sm text-neutral-500">
             {totalCount} produit{totalCount > 1 ? 's' : ''}
           </p>
+          {isAdmin && (
+            <Link to="/admin/trash" className="text-sm text-neutral-500 hover:text-brand-navy flex items-center gap-1 mt-1">
+              <Trash2 size={14} /> Corbeille
+            </Link>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {isAdmin && (
@@ -788,7 +795,7 @@ export default function AdminProducts() {
           <div className="flex items-center justify-between gap-3 border-t border-neutral-200 pt-5">
             {/* Delete button (edit mode only) */}
             {editingProduct && (
-              isAdmin ? (
+              <PermissionGate action="delete">
                 <Button
                   type="button"
                   variant="ghost"
@@ -799,17 +806,7 @@ export default function AdminProducts() {
                   <Trash2 size={16} />
                   Supprimer
                 </Button>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  title="Action réservée à l'administrateur"
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-400 cursor-not-allowed select-none"
-                >
-                  <Lock size={14} />
-                  Suppression réservée à l'admin
-                </button>
-              )
+              </PermissionGate>
             )}
             <div className="ml-auto flex items-center gap-3">
               <Button

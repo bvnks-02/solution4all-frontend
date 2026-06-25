@@ -9,6 +9,7 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 import Modal from '../components/ui/Modal';
+import ExportPDFButton from '../components/ui/ExportPDFButton';
 
 const orderStatusLabels = {
   pending: 'En attente',
@@ -208,11 +209,14 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold text-neutral-900">Commandes</h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          {totalCount} commande{totalCount > 1 ? 's' : ''}
-        </p>
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-neutral-900">Commandes</h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            {totalCount} commande{totalCount > 1 ? 's' : ''}
+          </p>
+        </div>
+        <ExportPDFButton reportType="orders" label="Exporter commandes PDF" />
       </div>
 
       {/* Filter bar */}

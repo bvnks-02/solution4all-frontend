@@ -11,6 +11,8 @@ import Checkout from './pages/Checkout';
 import NotFound from './pages/NotFound';
 import ResetPassword from './pages/ResetPassword';
 import ActivateAccount from './pages/ActivateAccount';
+import AdminResetPassword from './admin/AdminResetPassword';
+import AdminActivateAccount from './admin/AdminActivateAccount';
 import { AdminProvider } from './admin/AdminContext';
 import AdminRoute from './admin/AdminRoute';
 import { CartProvider } from './context/CartContext';
@@ -33,6 +35,9 @@ export default function App() {
             {/* Auth pages — outside admin layout, no nav header */}
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/activate-account/:token" element={<ActivateAccount />} />
+            {/* Admin auth pages — query param tokens for email links */}
+            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
+            <Route path="/admin/activate-account" element={<AdminActivateAccount />} />
             <Route path="/admin/*" element={
               <AdminProvider>
                 <AdminRoute />

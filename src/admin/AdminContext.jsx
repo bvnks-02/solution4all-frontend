@@ -64,7 +64,7 @@ export function AdminProvider({ children }) {
   }, []);
 
   return (
-    <AdminContext.Provider value={{ admin, isAuthenticated, loading, login, logout }}>
+    <AdminContext.Provider value={{ admin, isAuthenticated, loading, login, logout, isAdmin: admin?.role === 'admin' }}>
       {children}
     </AdminContext.Provider>
   );

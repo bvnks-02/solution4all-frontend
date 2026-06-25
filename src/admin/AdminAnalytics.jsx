@@ -7,6 +7,7 @@ import { useToast } from '../components/ui/ToastContainer';
 import DataTable from '../components/ui/DataTable';
 import Badge from '../components/ui/Badge';
 import Spinner from '../components/ui/Spinner';
+import ExportPDFButton from '../components/ui/ExportPDFButton';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -385,6 +386,7 @@ export default function AdminAnalytics() {
               </button>
             ))}
           </div>
+          <ExportPDFButton reportType="analytics" dateRange={dateRange} />
         </div>
       </div>
 
