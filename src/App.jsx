@@ -9,6 +9,8 @@ import Boutique from './pages/Boutique';
 import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
 import NotFound from './pages/NotFound';
+import ResetPassword from './pages/ResetPassword';
+import ActivateAccount from './pages/ActivateAccount';
 import { AdminProvider } from './admin/AdminContext';
 import AdminRoute from './admin/AdminRoute';
 import { CartProvider } from './context/CartContext';
@@ -28,6 +30,9 @@ export default function App() {
               <Route path="/boutique/:slug" element={<ProductDetail />} />
               <Route path="/commande" element={<Checkout />} />
             </Route>
+            {/* Auth pages — outside admin layout, no nav header */}
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/activate-account/:token" element={<ActivateAccount />} />
             <Route path="/admin/*" element={
               <AdminProvider>
                 <AdminRoute />

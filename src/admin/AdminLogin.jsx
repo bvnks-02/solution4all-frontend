@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAdmin } from './AdminContext';
 import Spinner from '../components/ui/Spinner';
+import { api } from '../lib/api';
 
 export default function AdminLogin() {
   const { login } = useAdmin();
@@ -8,6 +9,24 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    try {
+      await api.post('/auth/forgot-password', { email: forgotEmail });
+      setForgotSuccess(true);
+    } catch (err) {
+      // Show generic message for security
+      setForgotSuccess(true);
+    } finally {
+      setForgotLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,6 +91,16 @@ export default function AdminLogin() {
             />
           </div>
 
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => { setForgotOpen(true); setForgotEmail(email); setForgotSuccess(false); }}
+              className="text-xs text-brand-navy hover:text-brand-gold transition-colors duration-150 font-medium"
+            >
+              Mot de passe oublié ?
+            </button>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -88,6 +117,59 @@ export default function AdminLogin() {
           </a>
         </p>
       </div>
+
+      {/* Forgot Password Modal */}
+      {forgotOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white border border-neutral-200 p-6 shadow-xl">
+            <h2 className="font-display text-xl font-bold text-neutral-950 mb-2">Mot de passe oublié</h2>
+            {forgotSuccess ? (
+              <div className="space-y-4">
+                <p className="text-sm text-neutral-600">
+                  Si un compte correspond à cet email, un lien de réinitialisation vous a été envoyé. Vérifiez votre boîte de réception.
+                </p>
+                <button
+                  onClick={() => setForgotOpen(false)}
+                  className="w-full rounded-xl bg-brand-navy py-2.5 text-sm font-semibold text-white hover:bg-brand-navyDark transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <p className="text-sm text-neutral-500">
+                  Saisissez votre adresse email. Vous recevrez un lien pour réinitialiser votre mot de passe.
+                </p>
+                <input
+                  type="email"
+                  required
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="votre@email.dz"
+                  className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm text-neutral-900 focus:border-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
+                />
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setForgotOpen(false)}
+                    className="flex-1 rounded-xl border border-neutral-200 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="flex-1 rounded-xl bg-brand-navy py-2.5 text-sm font-semibold text-white hover:bg-brand-navyDark disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {forgotLoading && <Spinner size="sm" />}
+                    Envoyer
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

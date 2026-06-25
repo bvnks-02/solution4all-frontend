@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Routes, Route, NavLink, useLocation, Navigate } from 'react-router-dom';
-import { LayoutDashboard, Mail, BarChart3, Settings, LogOut, Menu, X, ChevronRight, ShoppingCart, Package } from 'lucide-react';
+import { LayoutDashboard, Mail, BarChart3, Settings, LogOut, Menu, X, ChevronRight, ShoppingCart, Package, Sliders } from 'lucide-react';
 import { useAdmin } from './AdminContext';
 import AdminDashboard from './AdminDashboard';
 import AdminSubmissions from './AdminSubmissions';
@@ -8,6 +8,7 @@ import AdminAnalytics from './AdminAnalytics';
 import AdminServices from './AdminServices';
 import AdminOrders from './AdminOrders';
 import AdminProducts from './AdminProducts';
+import AdminSettings from './AdminSettings';
 import ToastContainer from '../components/ui/ToastContainer';
 
 const navItems = [
@@ -16,7 +17,8 @@ const navItems = [
   { to: '/admin/orders', icon: ShoppingCart, label: 'Commandes' },
   { to: '/admin/products', icon: Package, label: 'Produits' },
   { to: '/admin/analytics', icon: BarChart3, label: 'Statistiques' },
-  { to: '/admin/services', icon: Settings, label: 'Services' },
+  { to: '/admin/services', icon: Sliders, label: 'Services' },
+  { to: '/admin/settings', icon: Settings, label: 'Paramètres' },
 ];
 
 export default function AdminLayout() {
@@ -31,7 +33,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-neutral-50 flex">
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-brand-navyDark text-white transform transition-transform duration-250 ease-spring lg:translate-x-0 lg:static lg:inset-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-brand-navyDark text-white transform transition-transform duration-250 ease-spring lg:translate-x-0 lg:static lg:inset-auto print:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-white/10">
           <div className="flex items-center gap-2">
             <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -87,15 +89,15 @@ export default function AdminLayout() {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-sm lg:hidden animate-fade-in"
+          className="fixed inset-0 z-40 bg-neutral-900/60 backdrop-blur-sm lg:hidden print:hidden animate-fade-in"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen print:min-h-0 print:bg-white">
         {/* Top bar */}
-        <header className="h-16 bg-white border-b border-neutral-200 flex items-center justify-between px-4 lg:px-8">
+        <header className="h-16 bg-white border-b border-neutral-200 flex items-center justify-between px-4 lg:px-8 print:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
             className="lg:hidden p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 transition-colors duration-150"
@@ -125,7 +127,7 @@ export default function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 lg:p-8">
+        <main className="flex-1 p-4 lg:p-8 print:p-0">
           <Routes>
             <Route index element={<AdminDashboard />} />
             <Route path="submissions" element={<AdminSubmissions />} />
@@ -133,6 +135,7 @@ export default function AdminLayout() {
             <Route path="products" element={<AdminProducts />} />
             <Route path="analytics" element={<AdminAnalytics />} />
             <Route path="services" element={<AdminServices />} />
+            <Route path="settings" element={<AdminSettings />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
         </main>

@@ -51,7 +51,7 @@ export default function DataTable({
         </table>
       </div>
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 print:hidden">
           <p className="text-sm text-neutral-500">
             Page {page} sur {totalPages}
           </p>

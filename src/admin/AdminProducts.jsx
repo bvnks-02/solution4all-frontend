@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Plus, Star, Trash2, X, ImageIcon } from 'lucide-react';
+import { Search, Plus, Star, Trash2, X, ImageIcon, Lock, RotateCcw } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { collection, uploadFile, API_URL, getFileURL } from '../lib/api';
 import { useAdmin } from './AdminContext';
@@ -51,6 +51,11 @@ export default function AdminProducts() {
   const [deleting, setDeleting] = useState(false);
   const [newImageFiles, setNewImageFiles] = useState([]);
   const [removedImageNames, setRemovedImageNames] = useState([]);
+  const [trashOpen, setTrashOpen] = useState(false);
+  const [trashedProducts, setTrashedProducts] = useState([]);
+  const [trashLoading, setTrashLoading] = useState(false);
+  const [restoring, setRestoring] = useState(null);
+  const isAdmin = admin?.role === 'admin';
 
   const {
     register,
@@ -245,7 +250,7 @@ export default function AdminProducts() {
     setDeleting(true);
     try {
       await collection('products').delete(deleteTarget.id);
-      toast?.success('Produit supprimé avec succès');
+      toast?.success('Produit déplacé dans la corbeille');
       setDeleteTarget(null);
       if (modalOpen && editingProduct?.id === deleteTarget.id) {
         setModalOpen(false);
@@ -258,6 +263,39 @@ export default function AdminProducts() {
     } finally {
       setDeleting(false);
     }
+  };
+
+  const fetchTrash = async () => {
+    setTrashLoading(true);
+    try {
+      const { api } = await import('../lib/api');
+      const res = await api.get('/products/trash');
+      setTrashedProducts(res.data?.data || []);
+    } catch (err) {
+      toast?.error('Erreur lors du chargement de la corbeille');
+    } finally {
+      setTrashLoading(false);
+    }
+  };
+
+  const handleRestore = async (productId) => {
+    setRestoring(productId);
+    try {
+      const { api } = await import('../lib/api');
+      await api.patch(`/products/restore/${productId}`);
+      toast?.success('Produit restauré avec succès');
+      setTrashedProducts((prev) => prev.filter((p) => (p._id || p.id) !== productId));
+      fetchProducts();
+    } catch (err) {
+      toast?.error('Erreur lors de la restauration');
+    } finally {
+      setRestoring(null);
+    }
+  };
+
+  const openTrash = () => {
+    setTrashOpen(true);
+    fetchTrash();
   };
 
   // ---- Table columns ----
@@ -337,10 +375,21 @@ export default function AdminProducts() {
             {totalCount} produit{totalCount > 1 ? 's' : ''}
           </p>
         </div>
-        <Button variant="primary" size="md" onClick={openCreateForm}>
-          <Plus size={18} />
-          Ajouter un produit
-        </Button>
+        <div className="flex items-center gap-2">
+          {isAdmin && (
+            <button
+              onClick={openTrash}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors"
+            >
+              <Trash2 size={16} className="text-neutral-400" />
+              Corbeille
+            </button>
+          )}
+          <Button variant="primary" size="md" onClick={openCreateForm}>
+            <Plus size={18} />
+            Ajouter un produit
+          </Button>
+        </div>
       </div>
 
       {/* Filter bar */}
@@ -739,16 +788,28 @@ export default function AdminProducts() {
           <div className="flex items-center justify-between gap-3 border-t border-neutral-200 pt-5">
             {/* Delete button (edit mode only) */}
             {editingProduct && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="text-error hover:text-error"
-                onClick={() => setDeleteTarget(editingProduct)}
-              >
-                <Trash2 size={16} />
-                Supprimer
-              </Button>
+              isAdmin ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="text-error hover:text-error"
+                  onClick={() => setDeleteTarget(editingProduct)}
+                >
+                  <Trash2 size={16} />
+                  Supprimer
+                </Button>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  title="Action réservée à l'administrateur"
+                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-400 cursor-not-allowed select-none"
+                >
+                  <Lock size={14} />
+                  Suppression réservée à l'admin
+                </button>
+              )
             )}
             <div className="ml-auto flex items-center gap-3">
               <Button
@@ -779,11 +840,11 @@ export default function AdminProducts() {
       >
         <div className="space-y-4">
           <p className="text-sm text-neutral-700">
-            Êtes-vous sûr de vouloir supprimer le produit{' '}
+            Êtes-vous sûr de vouloir déplacer le produit{' '}
             <span className="font-semibold text-neutral-900">
               {deleteTarget?.name_fr}
             </span>{' '}
-            ? Cette action est irréversible.
+            dans la corbeille ? Vous pourrez le restaurer ultérieurement.
           </p>
           <div className="flex justify-end gap-3">
             <Button
@@ -807,6 +868,57 @@ export default function AdminProducts() {
           </div>
         </div>
       </Modal>
+
+      {/* Trash Modal */}
+      {trashOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-900/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-2xl rounded-2xl bg-white border border-neutral-200 shadow-xl flex flex-col max-h-[80vh]">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+              <h2 className="font-display text-xl font-bold text-neutral-950 flex items-center gap-2">
+                <Trash2 size={20} className="text-neutral-400" />
+                Corbeille — Produits supprimés
+              </h2>
+              <button
+                onClick={() => setTrashOpen(false)}
+                className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              {trashLoading ? (
+                <div className="flex justify-center py-12"><Spinner size="lg" /></div>
+              ) : trashedProducts.length === 0 ? (
+                <p className="text-center text-sm text-neutral-400 py-12">La corbeille est vide.</p>
+              ) : (
+                <div className="space-y-3">
+                  {trashedProducts.map((p) => {
+                    const pid = p._id || p.id;
+                    return (
+                      <div key={pid} className="flex items-center justify-between rounded-xl border border-neutral-100 bg-neutral-50 px-4 py-3">
+                        <div>
+                          <p className="text-sm font-semibold text-neutral-800">{p.name_fr}</p>
+                          <p className="text-xs text-neutral-400">
+                            Supprimé le {new Date(p.deletedAt).toLocaleDateString('fr-FR')}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleRestore(pid)}
+                          disabled={restoring === pid}
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-navyDark disabled:opacity-50 transition-colors"
+                        >
+                          {restoring === pid ? <Spinner size="xs" /> : <RotateCcw size={13} />}
+                          Restaurer
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

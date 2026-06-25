@@ -273,14 +273,24 @@ export default function AdminAnalytics() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="font-display text-2xl font-bold text-neutral-900">
-          Statistiques
-        </h1>
-        <p className="mt-1 text-sm text-neutral-500">
-          Analyse du trafic et des interactions — {totalCount} événement
-          {totalCount > 1 ? 's' : ''}
-        </p>
+      <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-neutral-900">
+            Statistiques
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500">
+            Analyse du trafic et des interactions — {totalCount} événement{totalCount > 1 ? 's' : ''}
+          </p>
+        </div>
+        <button
+          onClick={() => window.print()}
+          className="inline-flex items-center gap-2 rounded-xl bg-brand-navy px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-navyDark transition-colors duration-150 print:hidden"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Exporter en PDF
+        </button>
       </div>
 
       {/* Stats cards */}
@@ -310,7 +320,7 @@ export default function AdminAnalytics() {
       </div>
 
       {/* Filter bar */}
-      <div className="mb-6 rounded-xl border border-neutral-200/60 bg-white p-4 shadow-card">
+      <div className="mb-6 rounded-xl border border-neutral-200/60 bg-white p-4 shadow-card print:hidden">
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {/* Search */}
           <div className="relative min-w-[180px] flex-1">
