@@ -19,8 +19,8 @@ export default function ActivateAccount() {
       setError('Les mots de passe ne correspondent pas.');
       return;
     }
-    if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.');
+    if (!/^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)) {
+      setError('Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.');
       return;
     }
     setLoading(true);
