@@ -3,6 +3,7 @@ import HeroSection from '../components/sections/HeroSection';
 import ServicesOverview from '../components/sections/ServicesOverview';
 import WhyUsSection from '../components/sections/WhyUsSection';
 import StatsSection from '../components/sections/StatsSection';
+import PartnersSection from '../components/sections/PartnersSection';
 import CTABanner from '../components/sections/CTABanner';
 import TestimonialsSection from '../components/sections/TestimonialsSection';
 
@@ -18,6 +19,7 @@ export default function Home() {
       <ServicesOverview />
       <WhyUsSection />
       <StatsSection />
+      <PartnersSection />
       <CTABanner />
       <TestimonialsSection />
     </>

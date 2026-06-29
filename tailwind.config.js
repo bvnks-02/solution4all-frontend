@@ -75,6 +75,10 @@ export default {
           '0%, 100%': { transform: 'scale(1)', opacity: '1' },
           '50%': { transform: 'scale(1.05)', opacity: '0.85' },
         },
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
@@ -85,6 +89,7 @@ export default {
         'navbar-drop': 'navbar-drop 0.3s ease-out both',
         'spin-slow': 'spin-slow 1s linear infinite',
         'pulse-ring': 'pulse-ring 2s ease-in-out infinite',
+        marquee: 'marquee 40s linear infinite',
       },
       transitionTimingFunction: {
         spring: 'cubic-bezier(0.22, 1, 0.36, 1)',
