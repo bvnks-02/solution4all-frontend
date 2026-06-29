@@ -18,6 +18,9 @@ const statusColors = {
   archived: 'bg-neutral-100 text-neutral-500',
 };
 
+// Matches the `department` enum on contactSubmission.model.js
+const DEPARTMENTS = ['general', 'commercial', 'ecommerce', 'technical'];
+
 export default function AdminDashboard() {
   const { admin } = useAdmin();
   const [stats, setStats] = useState({ total: 0, new: 0, thisWeek: 0, byDept: {} });
@@ -25,30 +28,55 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchData() {
       try {
-        const allSubmissions = await collection('contact_submissions').getFullList({ sort: '-created' });
-        setRecent(allSubmissions.slice(0, 5));
-
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const weekFilter = `created >= "${oneWeekAgo.toISOString()}"`;
 
-        const total = allSubmissions.length;
-        const newCount = allSubmissions.filter((s) => s.status === 'new').length;
-        const thisWeek = allSubmissions.filter((s) => new Date(s.created) >= oneWeekAgo).length;
+        // Every figure is an exact server-side count (perPage=1, read from meta)
+        // so the cards stay correct regardless of total volume.
+        const [recentResult, totalResult, newResult, weekResult, ...deptResults] =
+          await Promise.all([
+            // 5 most recent submissions
+            collection('contact_submissions').getList(1, 5, { sort: '-created' }),
+            // Total count
+            collection('contact_submissions').getList(1, 1, { sort: '-created' }),
+            // New submissions count
+            collection('contact_submissions').getList(1, 1, { filter: 'status = "new"' }),
+            // This-week count
+            collection('contact_submissions').getList(1, 1, { filter: weekFilter }),
+            // Per-department counts (for the "Départements" card)
+            ...DEPARTMENTS.map((dept) =>
+              collection('contact_submissions').getList(1, 1, { filter: `department = "${dept}"` })
+            ),
+          ]);
+
+        if (cancelled) return;
+
         const byDept = {};
-        allSubmissions.forEach((s) => {
-          byDept[s.department] = (byDept[s.department] || 0) + 1;
+        DEPARTMENTS.forEach((dept, i) => {
+          if (deptResults[i].totalItems > 0) byDept[dept] = deptResults[i].totalItems;
         });
 
-        setStats({ total, new: newCount, thisWeek, byDept });
+        setRecent(recentResult.items);
+        setStats({
+          total: totalResult.totalItems,
+          new: newResult.totalItems,
+          thisWeek: weekResult.totalItems,
+          byDept,
+        });
       } catch (err) {
         console.error('Failed to fetch dashboard data:', err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
+
     fetchData();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search } from 'lucide-react';
 import { collection } from '../lib/api';
 import { useAdmin } from './AdminContext';
@@ -11,6 +11,16 @@ import ExportPDFButton from '../components/ui/ExportPDFButton';
 
 const ITEMS_PER_PAGE = 50;
 
+// Simple debounce hook
+function useDebounce(value, delay = 300) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
+
 const eventTypeLabels = {
   page_view: 'Page vue',
   cta_click: 'Clic CTA',
@@ -19,6 +29,8 @@ const eventTypeLabels = {
   form_error: 'Erreur formulaire',
   service_view: 'Service consulté',
 };
+
+const ALL_EVENT_TYPES = Object.keys(eventTypeLabels);
 
 const eventTypeBadgeColors = {
   page_view: 'navy',
@@ -41,8 +53,6 @@ const dateRangeOptions = [
   { value: '30days', label: '30 jours' },
   { value: 'all', label: 'Tout' },
 ];
-
-const ALL_EVENT_TYPES = Object.keys(eventTypeLabels);
 
 function getDateRangeFilter(range) {
   if (range === 'all') return '';
@@ -82,7 +92,6 @@ export default function AdminAnalytics() {
     totalWeek: 0,
     topEventType: null,
     topEventTypeCount: 0,
-    topEventTypeLoading: true,
   });
 
   // Filters
@@ -91,9 +100,16 @@ export default function AdminAnalytics() {
   const [dateRange, setDateRange] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  const abortRef = useRef(null);
+
   // ---- Data fetching ----
 
   const fetchData = useCallback(async () => {
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
       const filters = [];
@@ -107,45 +123,51 @@ export default function AdminAnalytics() {
       if (dateF) {
         filters.push(dateF);
       }
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim();
+      if (debouncedSearch.trim()) {
+        const q = debouncedSearch.trim();
         filters.push(`(page_path ~ "${q}" || event_label ~ "${q}")`);
       }
       const filter = filters.join(' && ');
 
-      // Fetch main list + global stats in parallel
-      const [listResult, totalAllResult, todayResult, weekResult] =
+      // Top event type is computed over the full filtered dataset (not just the
+      // current page) by reading totalItems from a perPage=1 count per type.
+      // All requests run in one parallel batch and share the abort signal.
+      const typeCountFilter = (type) => {
+        const typeCond = `event_type = "${type}"`;
+        return filter ? `${filter} && ${typeCond}` : typeCond;
+      };
+
+      const [listResult, totalAllResult, todayResult, weekResult, ...typeResults] =
         await Promise.all([
           collection('analytics_events').getList(page, ITEMS_PER_PAGE, {
             sort: '-created',
             filter: filter || undefined,
+            signal: controller.signal,
           }),
           collection('analytics_events').getList(1, 1, {
-            requestKey: 'analytics-total-all',
+            signal: controller.signal,
           }),
           collection('analytics_events').getList(1, 1, {
             filter: getDateRangeFilter('today'),
-            requestKey: 'analytics-today',
+            signal: controller.signal,
           }),
           collection('analytics_events').getList(1, 1, {
             filter: getDateRangeFilter('7days'),
-            requestKey: 'analytics-week',
+            signal: controller.signal,
           }),
+          ...ALL_EVENT_TYPES.map((type) =>
+            collection('analytics_events').getList(1, 1, {
+              filter: typeCountFilter(type),
+              signal: controller.signal,
+            })
+          ),
         ]);
+
+      if (controller.signal.aborted) return;
 
       setEvents(listResult.items);
       setTotalCount(listResult.totalItems);
       setTotalPages(listResult.totalPages);
-
-      // Compute top event type via per-type count requests
-      const typeResults = await Promise.all(
-        ALL_EVENT_TYPES.map((type) =>
-          collection('analytics_events').getList(1, 1, {
-            filter: `event_type = "${type}"`,
-            requestKey: `analytics-type-${type}`,
-          })
-        )
-      );
 
       let topType = null;
       let topCount = 0;
@@ -162,24 +184,27 @@ export default function AdminAnalytics() {
         totalWeek: weekResult.totalItems,
         topEventType: topType,
         topEventTypeCount: topCount,
-        topEventTypeLoading: false,
       });
     } catch (err) {
+      if (err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED') return;
       console.error('Failed to fetch analytics:', err);
       toast?.error('Erreur lors du chargement des statistiques');
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
-  }, [page, eventTypeFilter, deviceTypeFilter, dateRange, searchQuery, toast]);
+  }, [page, eventTypeFilter, deviceTypeFilter, dateRange, debouncedSearch]);
 
   useEffect(() => {
     fetchData();
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [fetchData]);
 
   // Reset to page 1 when any filter changes
   useEffect(() => {
     setPage(1);
-  }, [eventTypeFilter, deviceTypeFilter, dateRange, searchQuery]);
+  }, [eventTypeFilter, deviceTypeFilter, dateRange, debouncedSearch]);
 
   // ---- Table columns ----
 
@@ -307,7 +332,7 @@ export default function AdminAnalytics() {
               {card.label}
             </p>
             <p className="font-display text-2xl font-bold text-neutral-900">
-              {loading || (i === 3 && stats.topEventTypeLoading) ? (
+              {loading ? (
                 <span className="inline-block h-7 w-20 animate-pulse rounded bg-neutral-200" />
               ) : (
                 card.value

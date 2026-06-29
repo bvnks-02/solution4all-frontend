@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, Eye, Trash2, CheckCheck, Reply, Archive } from 'lucide-react';
 import { collection } from '../lib/api';
 import { useAdmin } from './AdminContext';
@@ -9,6 +9,16 @@ import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Spinner from '../components/ui/Spinner';
 import Modal from '../components/ui/Modal';
+
+// Simple debounce hook
+function useDebounce(value, delay = 300) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const id = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return debounced;
+}
 
 const departmentLabels = {
   general: 'Général',
@@ -52,9 +62,22 @@ export default function AdminSubmissions() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [bulkUpdating, setBulkUpdating] = useState(false);
 
+  // Debounce search to avoid firing requests on every keystroke
+  const debouncedSearch = useDebounce(searchQuery, 300);
+
+  // AbortController ref to cancel stale in-flight requests
+  const abortRef = useRef(null);
+
   // ---- Data fetching ----
 
   const fetchSubmissions = useCallback(async () => {
+    // Cancel any previous in-flight request
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
       const filters = [];
@@ -64,41 +87,52 @@ export default function AdminSubmissions() {
       if (departmentFilter) {
         filters.push(`department = "${departmentFilter}"`);
       }
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim();
+      if (debouncedSearch.trim()) {
+        const q = debouncedSearch.trim();
         filters.push(
           `(full_name ~ "${q}" || email ~ "${q}" || subject ~ "${q}")`
         );
       }
       const filter = filters.join(' && ');
 
+      // Fetch the paginated list + a lightweight count of new submissions
       const [listResult, newResult] = await Promise.all([
         collection('contact_submissions').getList(page, 20, {
           sort: '-created',
           filter: filter || undefined,
+          signal: controller.signal,
         }),
-        collection('contact_submissions').getFullList({
+        // Use perPage=1 and read totalItems from meta — avoids loading 500 records
+        // just to show the "N nouveaux" badge
+        collection('contact_submissions').getList(1, 1, {
           filter: 'status = "new"',
-          requestKey: 'new-count',
+          signal: controller.signal,
         }),
       ]);
 
       setSubmissions(listResult.items);
       setTotalCount(listResult.totalItems);
       setTotalPages(listResult.totalPages);
-      setNewCount(newResult.length);
+      setNewCount(newResult.totalItems);
     } catch (err) {
+      // Ignore aborted requests (from rapid filter changes) silently
+      if (err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED') return;
       if (err?.code !== 'ERR_NETWORK' && err?.response?.status !== 404) {
         console.error('Failed to fetch submissions:', err);
       }
       toast?.error('Erreur lors du chargement des messages');
     } finally {
-      setLoading(false);
+      // Don't clear loading for a request that was superseded — the newer
+      // in-flight request owns the loading state.
+      if (!controller.signal.aborted) setLoading(false);
     }
-  }, [page, statusFilter, departmentFilter, searchQuery, toast]);
+  }, [page, statusFilter, departmentFilter, debouncedSearch, toast]);
 
   useEffect(() => {
     fetchSubmissions();
+    return () => {
+      if (abortRef.current) abortRef.current.abort();
+    };
   }, [fetchSubmissions]);
 
   // ---- Selection handling ----

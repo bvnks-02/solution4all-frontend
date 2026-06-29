@@ -1,11 +1,13 @@
 import { useState, useCallback } from 'react';
 import Toast from './Toast';
 
+let toastCounter = 0;
+
 export default function ToastContainer() {
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback((type, message, duration = 4000) => {
-    const id = Date.now();
+    const id = ++toastCounter;
     setToasts((prev) => [...prev, { id, type, message, duration }]);
   }, []);
 
@@ -33,11 +35,16 @@ export default function ToastContainer() {
   );
 }
 
+let toastApi = null;
+
 export function useToast() {
-  return {
-    success: (msg, dur) => window.__toast?.('success', msg, dur),
-    error: (msg, dur) => window.__toast?.('error', msg, dur),
-    warning: (msg, dur) => window.__toast?.('warning', msg, dur),
-    info: (msg, dur) => window.__toast?.('info', msg, dur),
-  };
+  if (!toastApi) {
+    toastApi = {
+      success: (msg, dur) => window.__toast?.('success', msg, dur),
+      error: (msg, dur) => window.__toast?.('error', msg, dur),
+      warning: (msg, dur) => window.__toast?.('warning', msg, dur),
+      info: (msg, dur) => window.__toast?.('info', msg, dur),
+    };
+  }
+  return toastApi;
 }
