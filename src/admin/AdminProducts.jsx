@@ -284,7 +284,7 @@ export default function AdminProducts() {
     setRestoring(productId);
     try {
       const { api } = await import('../lib/api');
-      await api.patch(`/products/restore/${productId}`);
+      await api.patch(`/products/${productId}/restore`);
       toast?.success('Produit restauré avec succès');
       setTrashedProducts((prev) => prev.filter((p) => (p._id || p.id) !== productId));
       fetchProducts();
