@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { Download } from 'lucide-react';
 import Button from '../ui/Button';
 import { trackEvent } from '../../lib/analytics';
 
@@ -62,6 +63,18 @@ export default function HeroSection() {
               >
                 Découvrir nos services
               </Button>
+            </div>
+            {/* Download offer PDF */}
+            <div className="mt-5 animate-fade-up" style={{ animationDelay: '350ms' }}>
+              <a
+                href="/offre-de-service.pdf"
+                download
+                onClick={() => handleCTA('Télécharger offre de service - Hero')}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-brand-gold rounded-md transition-colors duration-250 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy"
+              >
+                <Download className="w-4 h-4" aria-hidden="true" />
+                Télécharger notre offre de service (PDF)
+              </a>
             </div>
             {/* Trust indicators */}
             <div className="mt-8 flex flex-wrap gap-6 text-sm text-white/70 animate-fade-up" style={{ animationDelay: '400ms' }}>
