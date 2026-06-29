@@ -1,6 +1,6 @@
 import { collection } from './api';
 
-const ANALYTICS_ENABLED = import.meta.env.VITE_ANALYTICS_ENABLED !== 'false';
+const ANALYTICS_ENABLED = true; // hardcoded (no env var)
 
 function getDeviceType() {
   const w = window.innerWidth;

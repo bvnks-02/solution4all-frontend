@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = import.meta.env.VITE_SITE_URL || 'https://www.solution4all.dz';
+const SITE_URL = 'https://www.solution4all.dz'; // hardcoded (no env var)
 
 export default function SEOHead({ title, description, path = '/', ogType = 'website' }) {
   const fullTitle = title
