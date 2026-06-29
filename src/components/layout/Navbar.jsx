@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Menu, X, ShoppingCart } from 'lucide-react';
+import { Menu, X, ShoppingCart, Lock } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import Button from '../ui/Button';
 
@@ -172,13 +172,15 @@ export default function Navbar({ onCartOpen }) {
             </button>
             <Link
               to="/admin"
-              className={`inline-flex items-center justify-center font-display font-semibold rounded-lg transition-[color,background-color,transform,box-shadow,opacity,border-color] duration-250 ease-spring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 px-3.5 py-1.5 text-sm select-none cursor-pointer border-2 hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.98] active:translate-y-0 ${
+              aria-label="Accès Admin"
+              title="Accès Admin"
+              className={`inline-flex items-center justify-center rounded-lg transition-[color,background-color,transform,box-shadow,opacity,border-color] duration-250 ease-spring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 p-2 select-none cursor-pointer border-2 hover:-translate-y-0.5 hover:shadow-card-hover active:scale-[0.98] active:translate-y-0 ${
                 isScrolled
                   ? 'border-brand-navy text-brand-navy hover:bg-brand-navy hover:text-white focus-visible:ring-brand-navy'
                   : 'border-white/80 text-white hover:bg-white hover:text-brand-navy focus-visible:ring-white'
               }`}
             >
-              Accès Admin
+              <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
             </Link>
             <Button
               variant="primary"
@@ -273,8 +275,8 @@ export default function Navbar({ onCartOpen }) {
                   <Button variant="primary" size="md" href="/contact?dept=commercial" onClick={closeDrawer} className="w-full">
                     Demander un devis
                   </Button>
-                  <Button variant="secondary" size="md" href="/admin" onClick={closeDrawer} className="w-full">
-                    Accès Admin
+                  <Button variant="secondary" size="md" href="/admin" onClick={closeDrawer} className="w-full" aria-label="Accès Admin" title="Accès Admin">
+                    <Lock size={18} strokeWidth={1.75} aria-hidden="true" />
                   </Button>
                 </div>
               </div>

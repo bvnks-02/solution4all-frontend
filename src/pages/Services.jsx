@@ -81,7 +81,7 @@ export default function Services() {
                           key={i}
                           className="flex items-start gap-2 text-neutral-700"
                         >
-                          <span className="text-brand-navy mt-0.5">✓</span>
+                          <LucideIcons.Check size={18} strokeWidth={2.5} className="text-brand-navy mt-0.5 shrink-0" aria-hidden="true" />
                           {feature}
                         </li>
                       ))}

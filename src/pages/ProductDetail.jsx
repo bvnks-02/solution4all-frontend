@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ShoppingBag, Minus, Plus, FileText, ChevronRight, Package } from 'lucide-react';
+import { ShoppingBag, Minus, Plus, FileText, ChevronRight, Package, Check } from 'lucide-react';
 import SEOHead from '../components/ui/SEOHead';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
@@ -344,8 +344,8 @@ export default function ProductDetail() {
                         disabled={!inStock}
                         className="flex-1"
                       >
-                        <ShoppingBag size={20} />
-                        {addedToCart ? 'Ajouté au panier ✓' : 'Ajouter au panier'}
+                        {addedToCart ? <Check size={20} aria-hidden="true" /> : <ShoppingBag size={20} aria-hidden="true" />}
+                        {addedToCart ? 'Ajouté au panier' : 'Ajouter au panier'}
                       </Button>
                       <Button
                         variant="secondary"

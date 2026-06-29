@@ -20,8 +20,8 @@ export default function Home() {
       <WhyUsSection />
       <StatsSection />
       <PartnersSection />
-      <CTABanner />
       <TestimonialsSection />
+      <CTABanner />
     </>
   );
 }
