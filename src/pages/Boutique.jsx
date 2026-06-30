@@ -10,6 +10,7 @@ import Select from '../components/ui/Select';
 import { collection, getFileURL } from '../lib/api';
 import { formatDZD } from '../lib/format';
 import { useScrollTop } from '../hooks/useScrollTop';
+import { useDebounce } from '../hooks/useDebounce';
 
 const PER_PAGE = 12;
 
@@ -73,6 +74,14 @@ export default function Boutique() {
   useEffect(() => {
     setSearchInput(searchQuery);
   }, [searchQuery]);
+
+  // Live search — push the debounced input into the URL as the user types.
+  const debouncedSearchInput = useDebounce(searchInput, 350);
+  useEffect(() => {
+    if (debouncedSearchInput !== searchQuery) {
+      updateFilters({ recherche: debouncedSearchInput });
+    }
+  }, [debouncedSearchInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateFilters = useCallback(
     (updates) => {

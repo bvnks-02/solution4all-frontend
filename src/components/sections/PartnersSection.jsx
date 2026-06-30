@@ -26,7 +26,7 @@ function LogoItem({ name, src, ...rest }) {
         src={src}
         alt={name}
         loading="lazy"
-        className="h-12 md:h-16 w-auto max-w-[160px] object-contain opacity-70 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0"
+        className="h-20 md:h-28 w-auto max-w-[220px] object-contain"
       />
     </li>
   );

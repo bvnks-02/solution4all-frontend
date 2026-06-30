@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { collection, uploadFile, API_URL, getFileURL } from '../lib/api';
 import { useAdmin } from './AdminContext';
 import { formatDZD } from '../lib/format';
+import { useDebounce } from '../hooks/useDebounce';
 import { useToast } from '../components/ui/ToastContainer';
 import DataTable from '../components/ui/DataTable';
 import Badge from '../components/ui/Badge';
@@ -45,7 +46,11 @@ export default function AdminProducts() {
   const [loading, setLoading] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const [activeOnly, setActiveOnly] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [bulkDeleting, setBulkDeleting] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -75,8 +80,8 @@ export default function AdminProducts() {
       if (categoryFilter) {
         filters.push(`category = "${categoryFilter}"`);
       }
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim();
+      if (debouncedSearch.trim()) {
+        const q = debouncedSearch.trim();
         filters.push(`(name_fr ~ "${q}" || slug ~ "${q}")`);
       }
       if (activeOnly) {
@@ -106,11 +111,43 @@ export default function AdminProducts() {
     } finally {
       setLoading(false);
     }
-  }, [page, categoryFilter, searchQuery, activeOnly, toast]);
+  }, [page, categoryFilter, debouncedSearch, activeOnly, toast]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  // Selection clears whenever the visible result set changes (filters / page).
+  useEffect(() => {
+    setSelectedIds([]);
+  }, [page, categoryFilter, debouncedSearch, activeOnly]);
+
+  const toggleRow = (id) =>
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+
+  const toggleAll = (checked) =>
+    setSelectedIds(checked ? products.map((p) => p.id) : []);
+
+  const confirmBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    setBulkDeleting(true);
+    try {
+      await Promise.all(selectedIds.map((id) => collection('products').delete(id)));
+      toast?.success(
+        `${selectedIds.length} produit${selectedIds.length > 1 ? 's déplacés' : ' déplacé'} dans la corbeille`
+      );
+      setSelectedIds([]);
+      setBulkDeleteOpen(false);
+      fetchProducts();
+    } catch (err) {
+      console.error('Bulk delete failed:', err);
+      toast?.error('Erreur lors de la suppression groupée');
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
 
   // ---- Form helpers ----
 
@@ -455,6 +492,30 @@ export default function AdminProducts() {
         </div>
       </div>
 
+      {/* Bulk action bar — appears when ≥1 row is selected */}
+      {isAdmin && selectedIds.length > 0 && (
+        <div className="mb-4 flex items-center justify-between gap-4 rounded-xl border border-brand-navy/20 bg-brand-navy/5 px-4 py-3">
+          <span className="text-sm font-semibold text-brand-navy">
+            {selectedIds.length} produit{selectedIds.length > 1 ? 's sélectionnés' : ' sélectionné'}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSelectedIds([])}
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-white transition-colors"
+            >
+              Annuler
+            </button>
+            <button
+              onClick={() => setBulkDeleteOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-error px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+            >
+              <Trash2 size={15} />
+              Déplacer dans la corbeille
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Products table */}
       <div className="overflow-hidden rounded-xl border border-neutral-200/60 bg-white shadow-card">
         {loading ? (
@@ -470,6 +531,10 @@ export default function AdminProducts() {
             onPageChange={setPage}
             emptyMessage="Aucun produit trouvé."
             onRowClick={handleRowClick}
+            selectable={isAdmin}
+            selectedIds={selectedIds}
+            onToggleRow={toggleRow}
+            onToggleAll={toggleAll}
           />
         )}
       </div>
@@ -859,6 +924,44 @@ export default function AdminProducts() {
               className="bg-error text-white hover:bg-red-700"
               onClick={confirmDelete}
               loading={deleting}
+            >
+              Supprimer
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Bulk delete confirmation modal */}
+      <Modal
+        isOpen={bulkDeleteOpen}
+        onClose={() => setBulkDeleteOpen(false)}
+        title="Confirmer la suppression groupée"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-neutral-700">
+            Êtes-vous sûr de vouloir déplacer{' '}
+            <span className="font-semibold text-neutral-900">
+              {selectedIds.length} produit{selectedIds.length > 1 ? 's' : ''}
+            </span>{' '}
+            dans la corbeille ? Vous pourrez les restaurer ultérieurement.
+          </p>
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              size="md"
+              onClick={() => setBulkDeleteOpen(false)}
+            >
+              Annuler
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="md"
+              className="bg-error text-white hover:bg-red-700"
+              onClick={confirmBulkDelete}
+              loading={bulkDeleting}
             >
               Supprimer
             </Button>

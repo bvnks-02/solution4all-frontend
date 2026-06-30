@@ -148,7 +148,16 @@ export const collection = (name) => {
     const params = {};
     const conditions = filterStr.split('&&').map(c => c.trim());
     for (const cond of conditions) {
-      if (cond.startsWith('(')) continue; // OR conditions handled via search param
+      // OR-group searches, e.g. (name_fr ~ "abc" || slug ~ "abc"), map to the
+      // backend `search` param — the server fans it out across its own fields.
+      if (cond.startsWith('(')) {
+        const orMatch = cond.match(/~\s*['"]?([^'"|)]*)['"]?/);
+        if (orMatch) {
+          const value = orMatch[1].trim();
+          if (value) params.search = params.search ? `${params.search} ${value}` : value;
+        }
+        continue;
+      }
 
       const tildeMatch = cond.match(/(\w+)\s*~\s*['"]?([^'"]*)['"]?/);
       if (tildeMatch) {

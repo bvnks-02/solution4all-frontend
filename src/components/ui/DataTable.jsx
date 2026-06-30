@@ -8,13 +8,32 @@ export default function DataTable({
   onPageChange,
   emptyMessage = 'Aucune donnée à afficher.',
   onRowClick,
+  selectable = false,
+  selectedIds = [],
+  onToggleRow,
+  onToggleAll,
+  getRowId = (row) => row.id,
 }) {
+  const colCount = columns.length + (selectable ? 1 : 0);
+  const allSelected = data.length > 0 && data.every((row) => selectedIds.includes(getRowId(row)));
+
   return (
     <div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200">
+              {selectable && (
+                <th className="w-12 px-4 py-3 text-left">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={(e) => onToggleAll?.(e.target.checked)}
+                    className="h-4 w-4 rounded border-neutral-300 text-brand-navy focus:ring-brand-navy/30"
+                    aria-label="Tout sélectionner"
+                  />
+                </th>
+              )}
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -28,24 +47,39 @@ export default function DataTable({
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-neutral-500">
+                <td colSpan={colCount} className="px-4 py-8 text-center text-neutral-500">
                   {emptyMessage}
                 </td>
               </tr>
             ) : (
-              data.map((row, i) => (
-                <tr
-                  key={row.id || i}
-                  className={`border-b border-neutral-100 hover:bg-neutral-50 transition-colors duration-150 ${onRowClick ? 'cursor-pointer' : ''}`}
-                  onClick={() => onRowClick?.(row)}
-                >
-                  {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-neutral-700">
-                      {col.render ? col.render(row[col.key], row) : row[col.key]}
-                    </td>
-                  ))}
-                </tr>
-              ))
+              data.map((row, i) => {
+                const rowId = getRowId(row);
+                const isSelected = selectable && selectedIds.includes(rowId);
+                return (
+                  <tr
+                    key={rowId || i}
+                    className={`border-b border-neutral-100 transition-colors duration-150 ${isSelected ? 'bg-brand-navy/5' : 'hover:bg-neutral-50'} ${onRowClick ? 'cursor-pointer' : ''}`}
+                    onClick={() => onRowClick?.(row)}
+                  >
+                    {selectable && (
+                      <td className="w-12 px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => onToggleRow?.(rowId)}
+                          className="h-4 w-4 rounded border-neutral-300 text-brand-navy focus:ring-brand-navy/30"
+                          aria-label="Sélectionner la ligne"
+                        />
+                      </td>
+                    )}
+                    {columns.map((col) => (
+                      <td key={col.key} className="px-4 py-3 text-neutral-700">
+                        {col.render ? col.render(row[col.key], row) : row[col.key]}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>

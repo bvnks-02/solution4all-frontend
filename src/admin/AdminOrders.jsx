@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Search } from 'lucide-react';
 import { collection } from '../lib/api';
 import { useAdmin } from './AdminContext';
+import { useDebounce } from '../hooks/useDebounce';
 import { formatDZD, formatDate, formatDateTime } from '../lib/format';
 import { useToast } from '../components/ui/ToastContainer';
 import DataTable from '../components/ui/DataTable';
@@ -49,6 +50,7 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [originalAdminNotes, setOriginalAdminNotes] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
@@ -61,8 +63,8 @@ export default function AdminOrders() {
       if (statusFilter) {
         filters.push(`status = "${statusFilter}"`);
       }
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim();
+      if (debouncedSearch.trim()) {
+        const q = debouncedSearch.trim();
         filters.push(
           `(customer_name ~ "${q}" || order_number ~ "${q}")`
         );
@@ -81,7 +83,7 @@ export default function AdminOrders() {
     } finally {
       setLoading(false);
     }
-  }, [page, statusFilter, searchQuery, toast]);
+  }, [page, statusFilter, debouncedSearch, toast]);
 
   useEffect(() => {
     fetchOrders();

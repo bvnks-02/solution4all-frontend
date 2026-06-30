@@ -32,6 +32,8 @@ export default function AdminSettings() {
   });
   const [smtpLoading, setSmtpLoading] = useState(false);
   const [smtpFetching, setSmtpFetching] = useState(false);
+  const [testEmail, setTestEmail] = useState('');
+  const [testLoading, setTestLoading] = useState(false);
 
   // Users State (Admin only)
   const [users, setUsers] = useState([]);
@@ -40,6 +42,7 @@ export default function AdminSettings() {
   const [newUserData, setNewUserData] = useState({
     name: '',
     email: '',
+    password: '',
     role: 'user',
   });
   const [createUserLoading, setCreateUserLoading] = useState(false);
@@ -74,6 +77,7 @@ export default function AdminSettings() {
       const response = await api.get('/smtp-configs');
       if (response.data?.data) {
         setSmtpData(response.data.data);
+        setTestEmail((prev) => prev || response.data.data.fromEmail || '');
       }
     } catch (err) {
       console.error('Failed to fetch SMTP config:', err);
@@ -92,6 +96,19 @@ export default function AdminSettings() {
       toast.error(err.response?.data?.message || "Erreur d'enregistrement SMTP.");
     } finally {
       setSmtpLoading(false);
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    setTestLoading(true);
+    try {
+      const recipient = (testEmail || '').trim() || smtpData.fromEmail || smtpData.username;
+      const res = await api.post('/smtp-configs/test', { ...smtpData, to: recipient });
+      toast.success(res.data?.message || `Email de test envoyé à ${recipient}.`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Échec de l'envoi de l'email de test.");
+    } finally {
+      setTestLoading(false);
     }
   };
 
@@ -114,9 +131,9 @@ export default function AdminSettings() {
     setCreateUserLoading(true);
     try {
       await api.post('/users', newUserData);
-      toast.success('Utilisateur créé. Un email d\'activation a été envoyé.');
+      toast.success('Membre créé avec succès.');
       setCreateUserModalOpen(false);
-      setNewUserData({ name: '', email: '', role: 'user' });
+      setNewUserData({ name: '', email: '', password: '', role: 'user' });
       fetchUsers();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Erreur lors de la création du compte.');
@@ -343,11 +360,36 @@ export default function AdminSettings() {
                   />
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div className="flex flex-col gap-4 border-t border-neutral-200 pt-5 sm:flex-row sm:items-end sm:justify-between">
+                {/* Test email */}
+                <div className="w-full sm:max-w-sm">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1.5">
+                    Envoyer un email de test à
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      value={testEmail}
+                      onChange={(e) => setTestEmail(e.target.value)}
+                      placeholder={smtpData.fromEmail || 'ex: test@example.dz'}
+                      className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm text-neutral-900 focus:border-brand-navy focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-navy/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendTestEmail}
+                      disabled={testLoading}
+                      className="inline-flex shrink-0 items-center rounded-xl border border-brand-navy px-4 py-2.5 text-sm font-semibold text-brand-navy hover:bg-brand-navy hover:text-white disabled:opacity-50 transition-colors duration-150"
+                    >
+                      {testLoading ? <Spinner size="sm" className="mr-2" /> : null}
+                      Envoyer un email de test
+                    </button>
+                  </div>
+                </div>
+
                 <button
                   type="submit"
                   disabled={smtpLoading}
-                  className="rounded-xl bg-brand-navy px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-navyDark disabled:opacity-50 transition-colors duration-150"
+                  className="inline-flex items-center justify-center rounded-xl bg-brand-navy px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-navyDark disabled:opacity-50 transition-colors duration-150"
                 >
                   {smtpLoading ? <Spinner size="sm" className="mr-2" /> : null}
                   Enregistrer les paramètres SMTP
@@ -448,6 +490,20 @@ export default function AdminSettings() {
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1.5">
+                  Mot de passe (Obligatoire)
+                </label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={newUserData.password}
+                  onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
+                  placeholder="Minimum 6 caractères"
+                  className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-2.5 text-sm text-neutral-900 focus:border-brand-navy focus:bg-white focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1.5">
                   Rôle
                 </label>
                 <select
@@ -473,7 +529,7 @@ export default function AdminSettings() {
                   className="rounded-xl bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-navyDark disabled:opacity-50 transition-colors flex items-center"
                 >
                   {createUserLoading ? <Spinner size="sm" className="mr-1.5" /> : null}
-                  Envoyer l'invitation
+                  Créer le membre
                 </button>
               </div>
             </form>

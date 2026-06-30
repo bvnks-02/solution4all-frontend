@@ -107,8 +107,6 @@ export default function Navbar({ onCartOpen }) {
     ? 'fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md shadow-card-hover transition-all duration-350'
     : 'fixed top-0 inset-x-0 z-50 bg-brand-navy transition-all duration-350';
 
-  const logoScale = isScrolled ? 'scale-95' : 'scale-100';
-
   return (
     <>
       {/* Scroll sentinel */}
@@ -122,15 +120,15 @@ export default function Navbar({ onCartOpen }) {
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
-          <NavLink to="/" className={`flex items-center gap-2 transition-transform duration-350 ease-spring ${logoScale}`}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <NavLink to="/" className="flex items-center gap-2 shrink-0">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="shrink-0">
               <rect width="32" height="32" rx="8" fill="#1C3F7A" />
               <path d="M8 16L14 10L14 14L24 14L24 18L14 18L14 22L8 16Z" fill="#F5A800" />
             </svg>
-<span className={`font-display text-xl font-bold transition-colors duration-150 ${isScrolled ? 'text-brand-navy' : 'text-white'}`}>
+              <span className={`font-display text-xl font-bold transition-colors duration-150 ${isScrolled ? 'text-brand-navy' : 'text-white'}`}>
                 solution4all
               </span>
-              <span className={`hidden sm:inline text-xs font-medium tracking-wide transition-colors duration-150 ${isScrolled ? 'text-neutral-500' : 'text-white/60'}`}>
+              <span className="hidden sm:inline whitespace-nowrap text-xs font-semibold tracking-wide text-brand-gold">
                 votre clinique informatique
               </span>
           </NavLink>
